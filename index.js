@@ -14,11 +14,13 @@ let transcode = (videoFn) => {
   });
 }
 
-const inputFolder = './input';
+let dirInput = (directory) => {
+  fs.readdir(directory, (err, files) => {
+    if (err) console.log(err);
+    files.forEach(file => {
+      transcode(file);
+    })
+  });
+}
 
-fs.readdir(inputFolder, (err, files) => {
-  if (err) console.log(err);
-  files.forEach(file => {
-    transcode(file);
-  })
-});
+dirInput(); // pass in file location
