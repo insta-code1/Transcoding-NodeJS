@@ -1,14 +1,24 @@
-let ffmpeg = require('ffmpeg');
+const exec = require('child_process').exec;
+const fs = require('fs');
 
-try {
-  new ffmpeg('/home/insta/editing_videos/example_video.mp4', (err, video) => {
-    if (!err) {
-      console.log('The video is ready to be processed');
-    } else {
-      console.log(`Error: ${err}`);
-    }
+
+let transcode = (videoFn) => {
+  let video = videoFn.split(".")[0];
+
+  let cmd = `mkdir -p ./output/${video}/ && ffmpeg -i ./input/${videoFn} -start_number 0 -hls_time 10 -hls_list_size 0 -strict -2 ./output/${video}/${video}.m3u8`;
+
+  exec(cmd, function(error, stdout, stderr) {
+    // command output is in stdout
+    console.log(stdout);
+    console.log(stderr);
   });
-} catch (error) {
-  console.log(e.code);
-  console.log(e.message);
 }
+
+const inputFolder = './input';
+
+fs.readdir(inputFolder, (err, files) => {
+  if (err) console.log(err);
+  files.forEach(file => {
+    transcode(file);
+  })
+});
